@@ -1,0 +1,160 @@
+# =====================================================================
+#  RADAR DE INVESTIMENTOS: suas configurações
+#  Edite este arquivo direto no GitHub (ícone de lápis) e salve.
+#  O robô usa as mudanças na próxima vez que rodar.
+# =====================================================================
+
+# --- Sua lista de acompanhamento ---------------------------------------
+# Os ativos que você quer acompanhar de perto. Para eles o robô:
+#   - busca notícias específicas no Google Notícias
+#   - avisa no Telegram quando sobem ou caem forte no dia
+#   - avisa quando chegam no preço que você definiu (opcional)
+# "nome" ajuda na busca de notícias (use o nome popular da empresa).
+# "avisar_abaixo" / "avisar_acima": preço em R$ (opcional), por exemplo:
+#     - ticker: PETR4
+#       nome: Petrobras
+#       avisar_abaixo: 38.50
+#
+# A lista abaixo é só um EXEMPLO com ativos conhecidos, não é recomendação.
+# Troque pelos que você quiser acompanhar.
+minha_lista:
+  - ticker: PETR4
+    nome: Petrobras
+  - ticker: BBAS3
+    nome: Banco do Brasil
+  - ticker: ITUB4
+    nome: Itaú
+  - ticker: VALE3
+    nome: Vale
+  - ticker: WEGE3
+    nome: WEG
+  - ticker: TAEE11
+    nome: Taesa
+  - ticker: MXRF11
+    nome: Maxi Renda
+  - ticker: HGLG11
+    nome: Pátria Log
+  - ticker: BOVA11
+    nome: ETF Ibovespa
+  - ticker: IVVB11
+    nome: ETF S&P 500
+
+# --- Quais ativos entram nas tabelas ------------------------------------
+# Ativos pouco negociados ficam de fora (são difíceis de comprar e vender).
+# Valores em R$ negociados por dia, em média.
+liquidez_minima:
+  acoes: 2000000   # R$ 2 milhões/dia
+  fiis: 500000     # R$ 500 mil/dia
+  etfs: 300000
+  bdrs: 1000000
+
+# --- Alertas por regras --------------------------------------------------
+alertas:
+  # Avisa quando um ativo da SUA LISTA sobe ou cai pelo menos isso no dia (%).
+  variacao_dia_minha_lista: 3.0
+
+  # Avisa quando QUALQUER ação/FII líquido sobe ou cai pelo menos isso no dia (%).
+  # Coloque 0 para desligar.
+  variacao_dia_mercado: 8.0
+
+  # Os dois filtros abaixo vão no resumo do fim do dia (até 5 de cada; o resto fica no app).
+  # Cada ativo só é avisado de novo depois de uma semana.
+
+  # "Caiu bastante, mas os números da empresa continuam bons."
+  caiu_mas_solida:
+    ligado: true
+    queda_30_dias: -12.0   # caiu pelo menos 12% em 30 dias
+    nota_minima: 7.0       # nota de fundamentos (0 a 10) de pelo menos 7
+
+  # FIIs negociando com desconto e pagando bons rendimentos.
+  fii_com_desconto:
+    ligado: true
+    pvp_maximo: 0.92
+    dy_minimo: 9.0         # dividend yield anual (%)
+    nota_minima: 7.0
+
+  # Sinais da IA a partir de notícias: qual "chance" mínima gera notificação.
+  # Opções: baixa, media, alta
+  ia_chance_minima_minha_lista: media
+  ia_chance_minima_mercado: alta
+
+  # Máximo de alertas de mercado por mensagem (para não virar spam).
+  maximo_por_mensagem: 12
+
+# --- Inteligência artificial (análise das notícias) ---------------------
+ia:
+  ligada: true
+  # Modelo da Anthropic (Claude) que lê as notícias.
+  #   claude-opus-5-5   → mais inteligente (~US$ 0,20 por análise, ~US$ 14/mês)
+  #   claude-sonnet-5-5 → intermediário (~US$ 0,10 por análise, ~US$ 7/mês)
+  #   claude-haiku-5-5  → bem mais barato (~US$ 0,01 por análise, ~US$ 0,50/mês)
+  modelo: claude-opus-5-5
+  maximo_noticias: 150
+
+# --- Fontes de notícias --------------------------------------------------
+# Feeds RSS de sites confiáveis. Pode adicionar ou remover.
+noticias:
+  fontes:
+    - nome: InfoMoney
+      url: https://www.infomoney.com.br/feed/
+    - nome: Money Times
+      url: https://www.moneytimes.com.br/feed/
+    - nome: G1 Economia
+      url: https://g1.globo.com/rss/g1/economia/
+    - nome: Agência Brasil
+      url: https://agenciabrasil.ebc.com.br/rss/economia/feed.xml
+    - nome: Exame
+      url: https://exame.com/feed/
+  # Buscas no Google Notícias (pega Valor, Estadão, Folha, Reuters etc.).
+  buscas_google:
+    - Ibovespa ações hoje
+    - fundos imobiliários FII
+    - Copom Selic juros
+    - fato relevante B3
+    - site:valor.globo.com empresas
+  # Do Google Notícias, só aceita estes veículos (deixe a lista vazia para aceitar todos).
+  google_fontes_confiaveis:
+    - Valor
+    - InfoMoney
+    - Exame
+    - Money Times
+    - G1
+    - Globo
+    - Estadão
+    - E-Investidor
+    - Folha
+    - UOL
+    - CNN Brasil
+    - Reuters
+    - Bloomberg
+    - Brazil Journal
+    - Seu Dinheiro
+    - InvestNews
+    - Agência Brasil
+    - Poder360
+    - Veja
+    - NeoFeed
+    - Times Brasil
+    - BM&C News
+    - Investing.com
+    - Suno
+    - FIIs
+    - Clube FII
+    - Mais Retorno
+    - Valor Investe
+    - Exame Invest
+  # Notícias com estas palavras no título são ignoradas (não falam de mercado).
+  ignorar_palavras:
+    - loteria
+    - Mega-Sena
+    - Lotofácil
+    - Quina
+    - Lotomania
+    - Dia de Sorte
+    - Timemania
+    - Dupla Sena
+    - Milionária
+    - Super Sete
+    - horóscopo
+  # Quantas horas para trás procurar notícias.
+  horas: 18

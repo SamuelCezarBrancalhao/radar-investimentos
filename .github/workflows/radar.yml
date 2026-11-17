@@ -1,0 +1,88 @@
+name: Radar
+
+on:
+  schedule:
+    # Horários em UTC (Brasília = UTC-3)
+    - cron: "0,30 13-20 * * 1-5"   # pregão: a cada 30 min das 10h às 17h30 → cotações e alertas
+    - cron: "45 11,15 * * 1-5"     # 08h45 e 12h45 → notícias + IA
+    - cron: "15 21 * * 1-5"        # 18h15 → resumo do dia
+    - cron: "0 22 * * 0"           # domingo 19h → notícias da semana
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: "O que rodar"
+        type: choice
+        default: mercado
+        options: [mercado, analise, resumo, teste]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: radar
+  cancel-in-progress: false
+
+jobs:
+  rodar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Escolher o modo
+        id: modo
+        env:
+          AGENDA: ${{ github.event.schedule }}
+          MANUAL: ${{ inputs.modo }}
+        run: |
+          case "$AGENDA" in
+            "45 11,15 * * 1-5"|"0 22 * * 0") MODO=analise ;;
+            "15 21 * * 1-5") MODO=resumo ;;
+            "") MODO="${MANUAL:-mercado}" ;;
+            *) MODO=mercado ;;
+          esac
+          echo "modo=$MODO" >> "$GITHUB_OUTPUT"
+          echo "Modo: $MODO"
+
+      - name: Recuperar dados anteriores
+        run: |
+          mkdir -p publicar
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
+            git fetch --depth=1 origin gh-pages
+            git archive origin/gh-pages dados | tar -x -C publicar || true
+          fi
+
+      - name: Rodar o radar
+        env:
+          MODO: ${{ steps.modo.outputs.modo }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          REPO: ${{ github.repository }}
+        run: |
+          DONO="${REPO%%/*}"
+          NOME="${REPO#*/}"
+          export SITE_URL="https://${DONO,,}.github.io/${NOME}/"
+          python -m radar --modo "$MODO"
+
+      - name: Publicar o app (branch gh-pages)
+        if: steps.modo.outputs.modo != 'teste'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          cd publicar
+          git init -q -b gh-pages
+          git config user.name "radar-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Atualiza dados $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git" gh-pages
