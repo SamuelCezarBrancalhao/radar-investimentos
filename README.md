@@ -76,9 +76,9 @@ Sem ela, tabelas e alertas por regras funcionam normalmente, mas não há a aná
 
 | Modelo | Qualidade | Custo por mês |
 |---|---|---|
-| `claude-opus-5-5` (padrão) | o mais inteligente | ~US$ 10 a 15 |
+| `claude-haiku-5-5` (padrão) | básico | ~US$ 0,50 (US$ 5 duram mais de 1 ano) |
 | `claude-sonnet-5-5` | intermediário | ~US$ 5 a 7 |
-| `claude-haiku-5-5` | básico | ~US$ 0,50 |
+| `claude-opus-5-5` | o mais inteligente | ~US$ 10 a 15 |
 
 Dica: em **Billing → Limits** você pode definir um limite de gasto mensal.
 
@@ -124,7 +124,7 @@ Edite direto no GitHub (abra o arquivo → ícone de lápis → **Commit changes
     avisar_abaixo: 38.50
   ```
 - **`alertas`**: a partir de quantos % de alta ou queda avisar, filtros de "caiu, mas os números são bons" e de "FII com desconto", e a chance mínima da IA para mandar notificação.
-- **`ia.modelo`**: troque para `claude-haiku-5-5` se quiser gastar bem menos.
+- **`ia.modelo`**: já vem no `claude-haiku-5-5`, o mais barato. Troque para `claude-sonnet-5-5` ou `claude-opus-5-5` se quiser análises mais profundas.
 - **`noticias`**: adicione ou remova sites e buscas.
 
 ## Horários (Brasília, dias úteis)

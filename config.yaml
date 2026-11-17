@@ -84,11 +84,13 @@ alertas:
 # --- Inteligência artificial (análise das notícias) ---------------------
 ia:
   ligada: true
+  # Só funciona depois que você colocar o segredo ANTHROPIC_API_KEY no GitHub.
+  # Sem a chave, o robô pula a IA e não há cobrança nenhuma.
   # Modelo da Anthropic (Claude) que lê as notícias.
-  #   claude-opus-5-5   → mais inteligente (~US$ 0,20 por análise, ~US$ 14/mês)
+  #   claude-haiku-5-5  → o mais barato (~US$ 0,01 por análise, ~US$ 0,50/mês)
   #   claude-sonnet-5-5 → intermediário (~US$ 0,10 por análise, ~US$ 7/mês)
-  #   claude-haiku-5-5  → bem mais barato (~US$ 0,01 por análise, ~US$ 0,50/mês)
-  modelo: claude-opus-5-5
+  #   claude-opus-5-5   → o mais inteligente (~US$ 0,20 por análise, ~US$ 14/mês)
+  modelo: claude-haiku-5-5
   maximo_noticias: 150
 
 # --- Fontes de notícias --------------------------------------------------
