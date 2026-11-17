@@ -53,25 +53,29 @@ alertas:
   # Avisa quando um ativo da SUA LISTA sobe ou cai pelo menos isso no dia (%).
   variacao_dia_minha_lista: 3.0
 
-  # Avisa quando QUALQUER ação/FII líquido sobe ou cai pelo menos isso no dia (%).
-  # Coloque 0 para desligar.
+  # Avisa quando uma ação/FII que NÃO está na sua lista sobe ou cai pelo menos isso no dia (%).
+  # Só entram os melhores: nota de fundamentos de pelo menos "variacao_dia_mercado_nota".
+  # Coloque 0 em variacao_dia_mercado para desligar.
   variacao_dia_mercado: 8.0
+  variacao_dia_mercado_nota: 8.0
 
-  # Os dois filtros abaixo vão no resumo do fim do dia (até 5 de cada; o resto fica no app).
+  # Os dois filtros abaixo vão no resumo do fim do dia.
+  # Só os melhores: mostra no máximo "quantidade_por_grupo" de cada (o resto fica no app).
   # Cada ativo só é avisado de novo depois de uma semana.
+  quantidade_por_grupo: 3
 
   # "Caiu bastante, mas os números da empresa continuam bons."
   caiu_mas_solida:
     ligado: true
     queda_30_dias: -12.0   # caiu pelo menos 12% em 30 dias
-    nota_minima: 7.0       # nota de fundamentos (0 a 10) de pelo menos 7
+    nota_minima: 8.0       # nota de fundamentos (0 a 10) de pelo menos 8
 
   # FIIs negociando com desconto e pagando bons rendimentos.
   fii_com_desconto:
     ligado: true
     pvp_maximo: 0.92
     dy_minimo: 9.0         # dividend yield anual (%)
-    nota_minima: 7.0
+    nota_minima: 8.0
 
   # Sinais da IA a partir de notícias: qual "chance" mínima gera notificação.
   # Opções: baixa, media, alta

@@ -102,6 +102,11 @@ def _pct_sinal(v: float | None) -> str:
     return ("+" if v > 0 else "−" if v < 0 else "") + _pct(v)
 
 
+def _nota(n: float) -> str:
+    """9.5 → '9,5'; 10.0 → '10'."""
+    return f"{n:.1f}".replace(".", ",").removesuffix(",0")
+
+
 def _bola(v: float | None) -> str:
     return "🟢" if (v or 0) > 0.05 else "🔴" if (v or 0) < -0.05 else "⚪"
 
@@ -151,15 +156,17 @@ def alertas_de_mercado(mercado: dict, config: dict, ctrl: Controle) -> list[str]
 
     # 2) Mercado: altas/quedas muito fortes no dia
     limite_m = float(cfg.get("variacao_dia_mercado", 0) or 0)
+    nota_m = float(cfg.get("variacao_dia_mercado_nota", 0) or 0)
     if limite_m:
         fortes = [a for c in ("acoes", "fiis") for a in mercado.get(c, [])
-                  if a.get("var_dia") is not None and abs(a["var_dia"]) >= limite_m and a["ticker"] not in lista_cfg]
+                  if a.get("var_dia") is not None and abs(a["var_dia"]) >= limite_m and a["ticker"] not in lista_cfg
+                  and (a.get("nota") or 0) >= nota_m]
         for a in sorted(fortes, key=lambda x: -abs(x["var_dia"])):
             chave = f"forte:{a['ticker']}:{hoje}"
             if ctrl.ja_enviado(chave):
                 continue
             ctrl.marcar(chave)
-            mercado_msgs.append(f"{_bola(a['var_dia'])} <b>{esc(a['ticker'])}</b> {_pct_sinal(a['var_dia'])}")
+            mercado_msgs.append(f"{_bola(a['var_dia'])} {_cab(a)} {_pct_sinal(a['var_dia'])} · nota {_nota(a['nota'])}")
 
     maximo = int(cfg.get("maximo_por_mensagem", 12))
     if len(mercado_msgs) > maximo:
@@ -169,7 +176,7 @@ def alertas_de_mercado(mercado: dict, config: dict, ctrl: Controle) -> list[str]
     if da_lista:
         blocos.append("⭐ <b>Sua lista</b>\n" + "\n".join(da_lista))
     if mercado_msgs:
-        blocos.append("⚡ <b>Mexeram forte hoje</b>\n" + "\n".join(mercado_msgs))
+        blocos.append("⚡ <b>Boas empresas que mexeram forte hoje</b>\n" + "\n".join(mercado_msgs))
     return blocos
 
 
@@ -177,10 +184,11 @@ def alertas_de_mercado(mercado: dict, config: dict, ctrl: Controle) -> list[str]
 # Filtros "para estudar" (uma vez por dia, no resumo)
 # ---------------------------------------------------------------------------
 
-def alertas_de_filtros(mercado: dict, config: dict, ctrl: Controle, por_filtro: int = 5) -> list[str]:
-    """Cada ativo só é avisado de novo depois de 7 dias. No máximo `por_filtro` por dia;
-    o resto aparece no app."""
+def alertas_de_filtros(mercado: dict, config: dict, ctrl: Controle) -> list[str]:
+    """Cada ativo só é avisado de novo depois de 7 dias. Só os melhores de cada grupo
+    (config: alertas.quantidade_por_grupo); o resto aparece no app."""
     cfg = config.get("alertas", {})
+    por_filtro = int(cfg.get("quantidade_por_grupo", 3))
     blocos = []
 
     c = cfg.get("caiu_mas_solida", {})
@@ -193,7 +201,7 @@ def alertas_de_filtros(mercado: dict, config: dict, ctrl: Controle, por_filtro: 
         itens = []
         for a in novos:
             ctrl.marcar(f"solida:{a['ticker']}")
-            linha2 = f"caiu {_pct(a['var_30d'])} no mês · nota {a['nota']:.0f}"
+            linha2 = f"caiu {_pct(a['var_30d'])} no mês · nota {_nota(a['nota'])}"
             aviso = _aviso(a)
             itens.append(f"{_cab(a)}\n{linha2}" + (f"\n⚠️ {aviso}" if aviso else ""))
         if itens:

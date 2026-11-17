@@ -287,14 +287,14 @@ function renderInicio() {
   const rs = E.mercado.regras?.caiu_mas_solida || {};
   const solidas = (E.mercado.acoes || []).map(a => E.idx[a.ticker])
     .filter(a => a.var_30d != null && a.var_30d <= (rs.queda_30_dias ?? -12) && (a.nota ?? 0) >= (rs.nota_minima ?? 7))
-    .sort((a, b) => a.var_30d - b.var_30d).slice(0, 8);
+    .sort((a, b) => (b.nota - a.nota) || (a.var_30d - b.var_30d)).slice(0, 5);
   $('#lista-solidas').innerHTML = listaHtml(solidas, 'Nenhuma ação no filtro agora.',
     a => `Caiu ${pct(a.var_30d)} em 30d · nota ${num(a.nota, nf1)} · P/L ${num(a.pl, nf1)}`);
 
   const rf = E.mercado.regras?.fii_com_desconto || {};
   const fiis = (E.mercado.fiis || []).map(a => E.idx[a.ticker])
     .filter(a => a.pvp && a.pvp <= (rf.pvp_maximo ?? 0.92) && (a.dy ?? 0) >= (rf.dy_minimo ?? 9) && (a.nota ?? 0) >= (rf.nota_minima ?? 7))
-    .sort((a, b) => a.pvp - b.pvp).slice(0, 8);
+    .sort((a, b) => (b.nota - a.nota) || (a.pvp - b.pvp)).slice(0, 5);
   $('#lista-fiidesc').innerHTML = listaHtml(fiis, 'Nenhum FII no filtro agora.');
 }
 
@@ -462,7 +462,7 @@ function renderTudo() {
 
 $('#atualizar').addEventListener('click', carregar);
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && Date.now() - E.carregadoEm > 5 * 60 * 1000) carregar();
+  if (document.visibilityState === 'visible' && E.carregadoEm && Date.now() - E.carregadoEm > 5 * 60 * 1000) carregar();
 });
 mostrarVista(lembrar('vista', 'inicio'));
 carregar();
