@@ -38,6 +38,8 @@ minha_lista:
     nome: ETF Ibovespa
   - ticker: IVVB11
     nome: ETF S&P 500
+  - ticker: NVDC34
+    nome: Nvidia
 
 # --- Quais ativos entram nas tabelas ------------------------------------
 # Ativos pouco negociados ficam de fora (são difíceis de comprar e vender).

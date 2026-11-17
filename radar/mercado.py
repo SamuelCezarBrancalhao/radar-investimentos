@@ -392,14 +392,16 @@ def montar_mercado(pasta_dados: Path, config: dict, forcar_refs=False) -> dict:
     fund_a, fund_f, hist = refs.get("fund_acoes", {}), refs.get("fund_fiis", {}), refs.get("historico", {})
     minimos = config.get("liquidez_minima", {})
     lista = [i["ticker"].upper() for i in config.get("minha_lista", [])]
+    nomes_lista = {i["ticker"].upper(): i.get("nome") for i in config.get("minha_lista", [])}
 
     saida = {"acoes": [], "fiis": [], "etfs": [], "bdrs": []}
     for tk, a in ativos.items():
         tipo = a["tipo"]
         h = hist.get(tk, {})
         preco = a["preco"]
+        nome = a["nome"] if a["nome"] != tk else (nomes_lista.get(tk) or tk)  # BDRs vêm sem nome
         item = {
-            "ticker": tk, "nome": a["nome"], "preco": preco, "var_dia": a["var_dia"],
+            "ticker": tk, "nome": nome, "preco": preco, "var_dia": a["var_dia"],
             "var_7d": _var(preco, h.get("c5")), "var_30d": _var(preco, h.get("c21")),
             "var_12m": _var(preco, h.get("c252")),
             "max_12m": h.get("max52"), "min_12m": h.get("min52"),
