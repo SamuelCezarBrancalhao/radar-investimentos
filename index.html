@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Radar</title>
+  <meta name="description" content="Dados reais da B3, notícias e possibilidades analisadas por IA.">
+  <meta name="theme-color" content="#0b3d3a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Radar">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topo">
+    <div class="topo-linha">
+      <h1 id="titulo">Início</h1>
+      <button id="atualizar" class="btn-icone" aria-label="Atualizar dados">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg>
+      </button>
+    </div>
+    <p id="atualizado" class="sub">Carregando…</p>
+  </header>
+
+  <main>
+    <!-- INÍCIO -->
+    <section id="v-inicio" class="vista" data-titulo="Início">
+      <div id="macro" class="macro"></div>
+      <div id="panorama"></div>
+      <h2 class="secao">Sua lista</h2>
+      <div id="lista-minha" class="lista"></div>
+      <div class="duas">
+        <div>
+          <h2 class="secao">Maiores altas hoje</h2>
+          <div id="lista-altas" class="lista"></div>
+        </div>
+        <div>
+          <h2 class="secao">Maiores quedas hoje</h2>
+          <div id="lista-quedas" class="lista"></div>
+        </div>
+      </div>
+      <h2 class="secao">Caíram, mas os números são bons <button class="ajuda" data-ajuda="solida" aria-label="O que é isso?">?</button></h2>
+      <div id="lista-solidas" class="lista"></div>
+      <h2 class="secao">FIIs com desconto <button class="ajuda" data-ajuda="fiidesc" aria-label="O que é isso?">?</button></h2>
+      <div id="lista-fiidesc" class="lista"></div>
+    </section>
+
+    <!-- IA -->
+    <section id="v-ia" class="vista" data-titulo="Possibilidades" hidden>
+      <div id="ia-cabecalho"></div>
+      <div class="chips" id="chips-ia" role="tablist"></div>
+      <div id="ia-lista"></div>
+      <h2 class="secao">Agenda</h2>
+      <div id="ia-agenda" class="cartao"></div>
+      <h2 class="secao">Notícias lidas pela IA</h2>
+      <div id="ia-noticias" class="lista"></div>
+    </section>
+
+    <!-- TABELAS -->
+    <section id="v-acoes" class="vista" data-titulo="Ações" hidden></section>
+    <section id="v-fiis" class="vista" data-titulo="Fundos imobiliários" hidden></section>
+    <section id="v-outros" class="vista" data-titulo="ETFs e BDRs" hidden></section>
+
+    <footer class="rodape">
+      <p>Dados públicos de brapi.dev, Fundamentus, Yahoo Finance e Banco Central, com atraso de até 30 minutos.
+        As notas são calculadas por fórmula e as possibilidades vêm de uma IA que lê notícias: podem estar erradas.
+        Nada aqui é recomendação de investimento.</p>
+      <button class="link" data-ajuda="notas">Como as notas são calculadas</button>
+      <button class="link" data-ajuda="glossario">O que significa cada indicador</button>
+    </footer>
+  </main>
+
+  <nav class="abas" aria-label="Seções">
+    <button data-vista="inicio" class="ativa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg><span>Início</span></button>
+    <button data-vista="ia"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 12l6-6"/></svg><span>IA</span></button>
+    <button data-vista="acoes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M6 16V9M10 16V5M14 16v-5M18 16V8"/></svg><span>Ações</span></button>
+    <button data-vista="fiis"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l6-4v15M10 20h10V11l-6-3M14 13v.01M17 13v.01M14 16v.01M17 16v.01M7 12v.01M7 15v.01"/></svg><span>FIIs</span></button>
+    <button data-vista="outros"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c2.5 2.5 2.5 13.5 0 16M12 4c-2.5 2.5-2.5 13.5 0 16"/></svg><span>ETF/BDR</span></button>
+  </nav>
+
+  <dialog id="dialogo">
+    <form method="dialog">
+      <div id="dialogo-corpo"></div>
+      <button class="btn">Entendi</button>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
